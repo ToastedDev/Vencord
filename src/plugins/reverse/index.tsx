@@ -11,6 +11,7 @@ import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { addPreSendListener, removePreSendListener } from "@api/MessageEvents";
 import { addButton, removeButton } from "@api/MessagePopover";
 import { classNameFactory } from "@api/Styles";
+import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { ChannelStore, Menu } from "@webpack/common";
 
@@ -87,8 +88,8 @@ export default definePlugin({
     settings,
     authors: [
         {
-            id: 12345n,
             name: "ToastedToast",
+            id: 955408387905048637n,
         },
     ],
     contextMenus: {
