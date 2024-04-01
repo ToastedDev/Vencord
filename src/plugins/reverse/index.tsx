@@ -11,14 +11,53 @@ import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { addPreSendListener, removePreSendListener } from "@api/MessageEvents";
 import { addButton, removeButton } from "@api/MessagePopover";
 import { classNameFactory } from "@api/Styles";
-import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { ChannelStore, Menu } from "@webpack/common";
 
 import { settings } from "./settings";
 
-const reverseMessage = (content: string) =>
+const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+function generateId() {
+    let id = "";
+    for (var i = 0; i < 12; i++) {
+        id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return id;
+}
+
+const rawReverseMessage = (content: string) =>
     content.split("").reverse().join("");
+
+function reverseMessage(content: string) {
+    const emojis: { id: string; emoji: string }[] = [];
+    return content
+        .replace(
+            new RegExp(
+                "^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$",
+                "u",
+            ),
+            (str) => {
+                const id = generateId();
+                emojis.push({
+                    id,
+                    emoji: str,
+                });
+                return `placeholder-${id}`;
+            },
+        )
+        .split("")
+        .reverse()
+        .join("")
+        .replace(/>[0-9]*@</g, rawReverseMessage)
+        .replace(new RegExp(`[${characters}]*-redlohecalp`, "gu"), (str) => {
+            console.log(str);
+            const id = rawReverseMessage(str).replace("placeholder-", "");
+            const emoji = emojis.find((emoji) => emoji.id === id);
+            if (emoji) return emoji.emoji;
+            else return str;
+        });
+}
 
 const patchMessageContextMenu: NavContextMenuPatchCallback = (
     children,
